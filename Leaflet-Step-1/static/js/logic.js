@@ -36,7 +36,9 @@ function createFeatures(earthquakeData) {
     var earthquakes = L.geoJSON(earthquakeData, {
         onEachFeature: onEachFeature,
         pointToLayer: addCircles
-    }).addTo(myMap);
+    });
+
+    createMap(earthquakes)
 };
 
 //set colors for circles based on depth
@@ -59,41 +61,60 @@ function chooseColor(depth) {
     else {return "Red";}
 };
 
-// map variables
-var usCenter = [37.0902, -95.7129];
-var zoom = 4;
+function createMap(earthquakes) {
+    
+    var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+        maxZoom: 18,
+        id: "light-v10",
+        accessToken: API_KEY
+    });
 
-// create map, center on US
-var myMap = L.map("map", {
-    center: usCenter,
-    zoom: zoom, 
-});
+    var outdoormap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+        maxZoom: 18,
+        id: "outdoors-v11",
+        accessToken: API_KEY
+        });
+    
+    var baseMaps = {
+        "Outdoor Map": outdoormap,
+        "Light Map": lightmap
+    };
 
-var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-    attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-    maxZoom: 18,
-    id: "light-v10",
-    accessToken: API_KEY
-  }).addTo(myMap);
+    var overlayMaps = {
+        "Earthquakes": earthquakes
+    };
 
-// Add legend to map
-var legend = L.control({ position: "bottomright" });
+    // create map, center on US
+    var myMap = L.map("map", {
+        center: [37.0902, -95.7129],
+        zoom: 4, 
+        layers: [outdoormap, earthquakes]
+    });
 
-legend.onAdd = function(myMap) {
-  var div = L.DomUtil.create("div", "legend");
-  return div;
+    // create layer control
+    L.control.layers(baseMaps, overlayMaps, {
+        collapsed: false
+    }).addTo(myMap);
+
+    // Add legend to map
+    var legend = L.control({ position: "bottomright" });
+
+    legend.onAdd = function() {
+    var div = L.DomUtil.create("div", "legend");
+    return div;
+    };
+
+    legend.addTo(map);
+
+    document.querySelector(".legend").innerHTML = [
+        "<div class='title'>Legend</div>",
+        "<div class='box GreenYellow'></div><div class='text'>-10-10</div>",
+        "<div class='box Yellow'></div><div class='text'>10-30</div>",
+        "<div class='box Gold'></div><div class='text'>30-50</div>",
+        "<div class='box Orange'></div><div class='text'>50-70</div>",
+        "<div class='box Coral'></div><div class='text'>70-90</div>",
+        "<div class='box Red'></div><div class='text'>90+</div>"
+        ].join("");
 };
-
-legend.addTo(map);
-
-document.querySelector(".legend").innerHTML = [
-    "<div class='title'>Legend</div>",
-    "<div class='box GreenYellow'></div><div class='text'>-10-10</div>",
-    "<div class='box Yellow'></div><div class='text'>10-30</div>",
-    "<div class='box Gold'></div><div class='text'>30-50</div>",
-    "<div class='box Orange'></div><div class='text'>50-70</div>",
-    "<div class='box Coral'></div><div class='text'>70-90</div>",
-    "<div class='box Red'></div><div class='text'>90+</div>"
-    ].join("");
-
-  
