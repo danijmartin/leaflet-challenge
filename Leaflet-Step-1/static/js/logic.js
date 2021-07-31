@@ -1,9 +1,45 @@
 // url for data
 var dataURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 
+// Grab data
+d3.json(dataURL).then(function(data) {
+    // call createFeatures function
+    createFeatures(data.features);
+
+  });
+
+  function createFeatures(earthquakeData) {
+    
+    //set colors for circles based on depth
+    function chooseColor(depth) {
+        switch (depth) {
+        case (depth <= 10):
+            return "GreenYellow";
+            break
+        case (depth <= 30):
+            return "Yellow";
+            break
+        case (depth <= 50):
+            return "Gold";
+            break
+        case (depth <= 70):
+            return "Orange";
+            break
+        case (depth <=90):
+            return "Coral";
+            break
+        default:
+            return "Red";
+        }
+    };
+
+  }
+
+
+
 // map variables
 var usCenter = [37.0902, -95.7129];
-var zoom = 4;
+var zoom = 2;
 
 // create map, center on US
 var myMap = L.map("map", {
@@ -17,3 +53,7 @@ var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{
     id: "light-v10",
     accessToken: API_KEY
   }).addTo(myMap);
+
+
+
+  
