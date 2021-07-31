@@ -10,48 +10,52 @@ d3.json(dataURL).then(function(data) {
 
 function createFeatures(earthquakeData) {
 
-// style for circles
-var markerOptions = {
-    radius: feature.properties.mag * 5, 
-    color: chooseColor(feature.geometry.coordinates[2]), 
-    fillColor: chooseColor(feature.geometry.coordinates[2]),
-    fillOpacity: 0.6,
-    weight: 1
-};    
+    // style for circles
+    function addCircles(feature, latlng) {
+        var markerOptions = {
+            radius: feature.properties.mag * 5, 
+            color: chooseColor(feature.geometry.coordinates[2]), 
+            fillColor: chooseColor(feature.geometry.coordinates[2]),
+            fillOpacity: 0.6,
+            weight: 1
+        };
+        // return circle marker
+        return L.circleMarker(latlng, markerOptions);
+    }
 
-// Give each feature a popup describing the place and time of the earthquake
-function onEachFeature(feature, layer) {
-    layer.bindPopup(`<h3>${feature.properties.place}</h3>
-                        <hr><p>Date: ${new Date(feature.properties.time)}<br>
-                        Depth: ${feature.geometry.coordinates[2]}<br>
-                        Size: ${feature.properties.mag}`);
-}
+    // Give each feature a popup describing the place and time of the earthquake
+    function onEachFeature(feature, layer) {
+        layer.bindPopup(`<h3>${feature.properties.place}</h3>
+                            <hr><p>Date: ${new Date(feature.properties.time)}<br>
+                            Depth: ${feature.geometry.coordinates[2]}<br>
+                            Size: ${feature.properties.mag}`);
+    }
 
-// return circle marker
-return L.circleMarker(latlng, markerOptions)
+    // define earthquakes for map
+    var earthquakes = L.geoJSON(earthquakeData, {
+        onEachFeature: onEachFeature,
+        pointToLayer: addCircles
+    }).addTo(myMap);
 };
 
 //set colors for circles based on depth
 function chooseColor(depth) {
-    switch (depth) {
-    case (depth <= 10):
+    if (depth <= 10) {
         return "GreenYellow";
-        break
-    case (depth <= 30):
-        return "Yellow";
-        break
-    case (depth <= 50):
-        return "Gold";
-        break
-    case (depth <= 70):
-        return "Orange";
-        break
-    case (depth <=90):
-        return "Coral";
-        break
-    default:
-        return "Red";
     }
+    else if (depth <= 30){
+        return "Yellow";
+    }
+    else if (depth <= 50) {
+        return "Gold";
+    }
+    else if (depth <= 70) {
+        return "Orange";
+    }
+    else if (depth <= 90) {
+        return "Coral";
+    }
+    else {return "Red";}
 };
 
 // map variables
