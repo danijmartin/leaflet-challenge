@@ -9,33 +9,42 @@ d3.json(dataURL).then(function(data) {
   });
 
   function createFeatures(earthquakeData) {
-    
-    //set colors for circles based on depth
-    function chooseColor(depth) {
-        switch (depth) {
-        case (depth <= 10):
-            return "GreenYellow";
-            break
-        case (depth <= 30):
-            return "Yellow";
-            break
-        case (depth <= 50):
-            return "Gold";
-            break
-        case (depth <= 70):
-            return "Orange";
-            break
-        case (depth <=90):
-            return "Coral";
-            break
-        default:
-            return "Red";
-        }
+
+    // style for circles
+    var markerOptions = {
+        radius: feature.properties.mag * 5, 
+        color: chooseColor(feature.geometry.coordinates[2]), 
+        fillColor: chooseColor(feature.geometry.coordinates[2]),
+        fillOpacity: 0.6,
+        weight: 1
     };
+    
+    // return circle marker
+    return L.circleMarker(latlng, markerOptions)
+  };
 
-  }
-
-
+//set colors for circles based on depth
+function chooseColor(depth) {
+    switch (depth) {
+    case (depth <= 10):
+        return "GreenYellow";
+        break
+    case (depth <= 30):
+        return "Yellow";
+        break
+    case (depth <= 50):
+        return "Gold";
+        break
+    case (depth <= 70):
+        return "Orange";
+        break
+    case (depth <=90):
+        return "Coral";
+        break
+    default:
+        return "Red";
+    }
+};
 
 // map variables
 var usCenter = [37.0902, -95.7129];
