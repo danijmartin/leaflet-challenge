@@ -6,22 +6,30 @@ d3.json(dataURL).then(function(data) {
     // call createFeatures function
     createFeatures(data.features);
 
-  });
+});
 
-  function createFeatures(earthquakeData) {
+function createFeatures(earthquakeData) {
 
-    // style for circles
-    var markerOptions = {
-        radius: feature.properties.mag * 5, 
-        color: chooseColor(feature.geometry.coordinates[2]), 
-        fillColor: chooseColor(feature.geometry.coordinates[2]),
-        fillOpacity: 0.6,
-        weight: 1
-    };
-    
-    // return circle marker
-    return L.circleMarker(latlng, markerOptions)
-  };
+// style for circles
+var markerOptions = {
+    radius: feature.properties.mag * 5, 
+    color: chooseColor(feature.geometry.coordinates[2]), 
+    fillColor: chooseColor(feature.geometry.coordinates[2]),
+    fillOpacity: 0.6,
+    weight: 1
+};    
+
+// Give each feature a popup describing the place and time of the earthquake
+function onEachFeature(feature, layer) {
+    layer.bindPopup(`<h3>${feature.properties.place}</h3>
+                        <hr><p>Date: ${new Date(feature.properties.time)}<br>
+                        Depth: ${feature.geometry.coordinates[2]}<br>
+                        Size: ${feature.properties.mag}`);
+}
+
+// return circle marker
+return L.circleMarker(latlng, markerOptions)
+};
 
 //set colors for circles based on depth
 function chooseColor(depth) {
