@@ -99,7 +99,7 @@ function createMap(earthquakes) {
     }).addTo(myMap);
 
     // Add legend to map
-    var legend = L.control({ position: "bottomright" });
+    var legend = L.control({position:"bottomright"});
 
     legend.onAdd = function() {
     var div = L.DomUtil.create("div", "legend");
@@ -109,7 +109,7 @@ function createMap(earthquakes) {
     legend.addTo(map);
 
     document.querySelector(".legend").innerHTML = [
-        "<div class='title'>Legend</div>",
+        "<div class='text'>Depth (in km)</div>",
         "<div class='box GreenYellow'></div><div class='text'>-10-10</div>",
         "<div class='box Yellow'></div><div class='text'>10-30</div>",
         "<div class='box Gold'></div><div class='text'>30-50</div>",
